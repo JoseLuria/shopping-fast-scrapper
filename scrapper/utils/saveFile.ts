@@ -1,20 +1,22 @@
 import { writeFile } from 'node:fs/promises'
+import axios from 'axios'
 import path from 'node:path'
 
 const ROOT_PATH = process.cwd()
 
-export const saveImage = async (src: string, name: string): Promise<string> => {
+export const saveImage = async (src: string, name: string): Promise<string | undefined> => {
   const fileName = `/products/${name}`
 
   const imageUrl = path.join(ROOT_PATH, fileName)
 
-  const responseImage = await fetch(src)
-  const arrayBuffer = await responseImage.arrayBuffer()
-  const buffer = Buffer.from(arrayBuffer)
-
-  await writeFile(imageUrl, buffer)
-
-  return fileName
+  try {
+    const { data } = await axios.get(src, { responseType: 'arraybuffer' })
+    const buffer = Buffer.from(data)
+    await writeFile(imageUrl, buffer)
+    return fileName
+  } catch (error) {
+    return undefined
+  }
 }
 
 export const saveJSON = async (JSONText: string): Promise<void> => {
