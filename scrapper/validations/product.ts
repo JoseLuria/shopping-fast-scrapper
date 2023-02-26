@@ -8,7 +8,7 @@ export const productSchema = z.object({
   category: z.string().min(1),
   stock: z.number(),
   description: z.string().min(1),
-  images: z.string().min(1),
+  images: z.array(z.string()).min(1),
   properties: z
     .array(
       z.object({
