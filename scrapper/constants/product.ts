@@ -39,7 +39,7 @@ export const PRODUCT_SELECTORS = [
     name: 'imagesElements',
     selector: '.other_views ul li a',
     attr: null,
-    iterator: [{ name: null, find: '', attr: 'href' }]
+    iterator: [{ name: 'image', find: '', attr: 'href' }]
   },
   {
     name: 'properties',
