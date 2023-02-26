@@ -1,10 +1,6 @@
 import { scrape } from '../utils'
 import { CATEGORIES_URLS, CATEGORIES_ITEM, CTEGORIES_ITEM_URL } from '../constants'
-
-interface Category {
-  url: string
-  category: string
-}
+import { Category } from '../types'
 
 export const getCategoryProducts = async () => {
   const productsUrls: Category[] = []
