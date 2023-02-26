@@ -2,6 +2,7 @@ import { v4 as uuid } from 'uuid'
 import { Category } from '../types'
 import { PRODUCT_SELECTORS, PRODUCTS_REMOVE_PROPERTIES } from '../constants'
 import { scrape, createSlug, formatDiscount, createStock, formatNumber, saveImage } from '../utils'
+import { productSchema } from '../validations'
 
 export const getIndividualProduct = async ({ url, category }: Category) => {
   const $ = await scrape(url)
@@ -36,31 +37,37 @@ export const getIndividualProduct = async ({ url, category }: Category) => {
 
   data.discount = discount ? formatDiscount(discount) : null
   data.price = priceUnique || priceOld
+  data.images = [imageContainer, ...imagesElements]
   data.slug = createSlug(data.name)
   data.stock = createStock()
   data.price = formatNumber(data.price)
 
+  PRODUCTS_REMOVE_PROPERTIES.forEach((value) => {
+    delete data[value]
+  })
+
+  const validate = productSchema.safeParse(data)
+
+  if (!validate.success) return
+
   const images: string[] = []
 
-  const productImages = [imageContainer, ...imagesElements]
-
-  for await (const image of productImages) {
+  for await (const image of data.images) {
     const id = uuid()
 
-    try {
-      const imagePath = await saveImage(image, `${id}.jpg`)
+    const imagePath = await saveImage(image, `${id}.jpg`)
+
+    if (imagePath) {
       images.push(imagePath)
       console.log(`Image ${imagePath} saved`)
-    } catch (error) {
-      console.log(`Image ${image} from product ${data.name} not found`)
+    }
+
+    if (!imagePath) {
+      console.log(`Image ${image} not found`)
     }
   }
 
   data.images = images
-
-  PRODUCTS_REMOVE_PROPERTIES.forEach((value) => {
-    delete data[value]
-  })
 
   return data
 }
