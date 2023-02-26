@@ -31,10 +31,10 @@ export const getIndividualProduct = async ({ url, category }: Category) => {
 
   data.discount = discount ? formatDiscount(discount) : null
   data.images = [imageContainer, ...imagesElements]
-  data.price = formatNumber(data.price)
   data.price = priceUnique || priceOld
   data.slug = createSlug(data.name)
   data.stock = createStock()
+  data.price = formatNumber(data.price)
 
   PRODUCTS_REMOVE_PROPERTIES.forEach((value) => {
     delete data[value]
