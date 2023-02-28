@@ -1,4 +1,5 @@
 import { writeFile } from 'node:fs/promises'
+import sharp from 'sharp'
 import axios from 'axios'
 import path from 'node:path'
 
@@ -12,7 +13,7 @@ export const saveImage = async (src: string, name: string): Promise<string | und
   try {
     const { data } = await axios.get(src, { responseType: 'arraybuffer' })
     const buffer = Buffer.from(data)
-    await writeFile(imageUrl, buffer)
+    sharp(buffer).webp().toFile(imageUrl)
     return fileName
   } catch (error) {
     return undefined

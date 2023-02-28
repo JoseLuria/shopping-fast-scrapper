@@ -55,7 +55,7 @@ export const getIndividualProduct = async ({ url, category }: Category) => {
   for await (const image of data.images) {
     const id = uuid()
 
-    const imagePath = await saveImage(image, `${id}.jpg`)
+    const imagePath = await saveImage(image, `${id}.webp`)
 
     if (imagePath) {
       images.push(imagePath)
