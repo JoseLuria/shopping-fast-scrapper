@@ -1,7 +1,13 @@
-import { v4 as uuid } from 'uuid'
 import { Category } from '../types'
 import { PRODUCT_SELECTORS, PRODUCTS_REMOVE_PROPERTIES } from '../constants'
-import { scrape, createSlug, formatDiscount, createStock, formatNumber, saveImage } from '../utils'
+import {
+  scrape,
+  createSlug,
+  formatDiscount,
+  createStock,
+  formatNumber,
+  generateImage
+} from '../utils'
 import { productSchema } from '../validations'
 
 export const getIndividualProduct = async ({ url, category }: Category) => {
@@ -37,7 +43,6 @@ export const getIndividualProduct = async ({ url, category }: Category) => {
 
   data.discount = discount ? formatDiscount(discount) : null
   data.price = priceUnique || priceOld
-  data.images = [imageContainer, ...imagesElements]
   data.slug = createSlug(data.name)
   data.stock = createStock()
   data.price = formatNumber(data.price)
@@ -52,18 +57,19 @@ export const getIndividualProduct = async ({ url, category }: Category) => {
 
   const images: string[] = []
 
-  for await (const image of data.images) {
-    const id = uuid()
+  for await (const image of imagesElements) {
+    const resultImage = await generateImage(image)
 
-    const imagePath = await saveImage(image, `${id}.webp`)
-
-    if (imagePath) {
-      images.push(imagePath)
-      console.log(`Image ${imagePath} saved`)
+    if (resultImage) {
+      images.push(resultImage)
     }
+  }
 
-    if (!imagePath) {
-      console.log(`Image ${image} not found`)
+  if (images.length === 0) {
+    const resultImage = await generateImage(imageContainer)
+
+    if (resultImage) {
+      images.push(resultImage)
     }
   }
 
