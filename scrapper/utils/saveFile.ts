@@ -1,7 +1,8 @@
 import { writeFile } from 'node:fs/promises'
+import path from 'node:path'
 import sharp from 'sharp'
 import axios from 'axios'
-import path from 'node:path'
+import { v4 as uuid } from 'uuid'
 
 const ROOT_PATH = process.cwd()
 
@@ -24,4 +25,20 @@ export const saveJSON = async (JSONText: string): Promise<void> => {
   const filePath = path.join(ROOT_PATH, 'products/products.json')
   await writeFile(filePath, JSONText, 'utf-8')
   console.log('Created products JSON')
+}
+
+export const generateImage = async (image: string) => {
+  const id = uuid()
+
+  const imagePath = await saveImage(image, `${id}.webp`)
+
+  if (imagePath) {
+    console.log(`Image ${imagePath} saved`)
+  }
+
+  if (!imagePath) {
+    console.log(`Image ${image} not found`)
+  }
+
+  return imagePath
 }
