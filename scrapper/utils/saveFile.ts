@@ -1,10 +1,19 @@
 import { writeFile } from 'node:fs/promises'
+import fs from 'node:fs'
 import path from 'node:path'
 import sharp from 'sharp'
 import axios from 'axios'
 import { v4 as uuid } from 'uuid'
 
 const ROOT_PATH = process.cwd()
+
+export const createFolder = () => {
+  const dirName = './products'
+
+  if (!fs.existsSync(dirName)) {
+    fs.mkdirSync(dirName)
+  }
+}
 
 export const saveImage = async (src: string, name: string): Promise<string | undefined> => {
   const fileName = `/products/${name}`

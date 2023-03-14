@@ -1,9 +1,11 @@
 import { getCategoryProducts, getIndividualProduct } from './actions'
 import { Product } from './types'
 import { productSchema } from './validations'
-import { saveJSON } from './utils'
+import { saveJSON, createFolder } from './utils'
 
 ;(async () => {
+  createFolder()
+
   const products: Product[] = []
 
   const categoryProducts = await getCategoryProducts()
